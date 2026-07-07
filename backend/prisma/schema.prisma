@@ -8,25 +8,43 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  password  String
+  id       String @id @default(cuid())
+  name     String
+  email    String @unique
+  password String
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
+  resume        Resume?
   refreshTokens RefreshToken[]
 }
 
 model RefreshToken {
-  id        String   @id @default(cuid())
-  token     String   @unique
+  id    String @id @default(cuid())
+  token String @unique
 
   userId String
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   expiresAt DateTime
 
   createdAt DateTime @default(now())
+}
+
+model Resume {
+  id String @id @default(cuid())
+
+  rawText String @db.Text
+
+  name  String
+  email String
+  phone String
+
+  skills Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
