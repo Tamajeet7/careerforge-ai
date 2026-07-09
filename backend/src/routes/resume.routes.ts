@@ -4,6 +4,7 @@ import multer from "multer";
 import { uploadResume } from "../controllers/resume.controller";
 import { authenticate } from "../middleware/auth.middleware";
 import { getMyResume } from "../controllers/resume.controller";
+import { getATSScore } from "../controllers/resume.controller";
 
 const router = Router();
 
@@ -22,6 +23,12 @@ router.get(
   "/me",
   authenticate,
   getMyResume
+);
+
+router.get(
+  "/ats",
+  authenticate,
+  getATSScore
 );
 
 export default router;

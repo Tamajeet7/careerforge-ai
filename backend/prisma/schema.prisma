@@ -8,14 +8,16 @@ datasource db {
 }
 
 model User {
-  id       String @id @default(cuid())
+  id String @id @default(cuid())
+
   name     String
   email    String @unique
   password String
 
   createdAt DateTime @default(now())
 
-  resume        Resume?
+  resume Resume?
+
   refreshTokens RefreshToken[]
 }
 
@@ -27,24 +29,34 @@ model RefreshToken {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   expiresAt DateTime
-
   createdAt DateTime @default(now())
 }
 
 model Resume {
   id String @id @default(cuid())
 
-  rawText String @db.Text
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title String @default("My Resume")
 
   name  String
   email String
   phone String
 
-  skills Json?
+  skills String[]
+
+  fileName String
+  filePath String
+  fileSize Int
+  mimeType String
+  pages    Int?
+
+  atsScore      Int?
+  resumeQuality Int?
+  skillsMatch   Int?
+  aiConfidence  String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

@@ -26,3 +26,5 @@ export function verifyAccessToken(token: string) {
 export function verifyRefreshToken(token: string) {
   return jwt.verify(token, REFRESH_SECRET);
 }
+
+console.log("ACCESS_SECRET:", process.env.JWT_ACCESS_SECRET);

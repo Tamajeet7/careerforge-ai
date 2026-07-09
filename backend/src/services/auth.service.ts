@@ -16,7 +16,7 @@ export async function registerUser(data: RegisterBody) {
 
   const hashedPassword = await hashPassword(data.password);
 
-  const user = await prisma.user.create({
+  await prisma.user.create({
     data: {
       name: data.name,
       email: data.email,
@@ -24,7 +24,11 @@ export async function registerUser(data: RegisterBody) {
     },
   });
 
-  return user;
+  // Automatically log the user in
+  return loginUser({
+    email: data.email,
+    password: data.password,
+  });
 }
 
 export async function loginUser(data: LoginBody) {
