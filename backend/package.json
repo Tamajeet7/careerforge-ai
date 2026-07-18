@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "postinstall": "npm run build"
   },
   "keywords": [],
   "author": "",
@@ -23,6 +24,8 @@
     "mammoth": "^1.12.0",
     "multer": "^2.2.0",
     "pdf-parse": "^1.1.1",
+    "pdfjs-dist": "^6.1.200",
+    "react-pdf": "^10.4.1",
     "zod": "^4.4.3"
   },
   "devDependencies": {
