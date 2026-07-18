@@ -46,10 +46,10 @@ model Resume {
 
   skills String[]
 
-  fileName String
+  fileName String?
   filePath String
-  fileSize Int
-  mimeType String
+  fileSize Int?
+  mimeType String?
   pages    Int?
 
   atsScore      Int?

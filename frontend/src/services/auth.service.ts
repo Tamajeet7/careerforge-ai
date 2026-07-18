@@ -6,6 +6,12 @@ import type {
 
 export async function register(data: RegisterData) {
   const response = await api.post("/auth/register", data);
+
+  localStorage.setItem(
+    "accessToken",
+    response.data.data.accessToken
+  );
+
   return response.data;
 }
 

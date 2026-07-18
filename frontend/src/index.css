@@ -1,1 +1,43 @@
 @import "tailwindcss";
+:root {
+  --primary-dark: #000A20;
+  --primary: #00226B;
+
+  --surface: #0B1736;
+  --surface-hover: #13224A;
+
+  --border: #233B72;
+
+  --accent: #4F46E5;
+
+  --text: #FFFFFF;
+  --text-secondary: #A8B3CF;
+  --text-muted: #7B8DB6;
+
+  --success: #22C55E;
+  --warning: #FACC15;
+  --danger: #EF4444;
+}
+
+body {
+  background: var(--primary-dark);
+  color: var(--text);
+}
+
+/* Chrome Autofill Fix */
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-text-fill-color: #ffffff !important;
+  caret-color: #ffffff !important;
+
+  -webkit-box-shadow: 0 0 0px 1000px #0f172a inset !important;
+  box-shadow: 0 0 0px 1000px #0f172a inset !important;
+
+  border-radius: 12px;
+
+  transition: background-color 9999s ease-in-out 0s;
+}
