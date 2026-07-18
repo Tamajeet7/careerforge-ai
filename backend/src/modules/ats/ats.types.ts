@@ -58,11 +58,13 @@ export type RecruiterReadiness =
 export interface ATSResult {
   score: number;
 
-  confidence: AIConfidence;
+  resumeQuality: number;
 
-  readiness: RecruiterReadiness;
+  skillsMatch: number;
 
-  metrics: ATSMetrics;
+  aiConfidence: AIConfidence;
+
+  recruiterReadiness: RecruiterReadiness;
 
   breakdown: ATSBreakdown;
 

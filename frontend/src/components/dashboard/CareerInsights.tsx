@@ -4,7 +4,13 @@ import {
   Briefcase,
 } from "lucide-react";
 
-export default function CareerInsights() {
+import type { ATSResult } from "../../types/ats.types";
+
+interface Props {
+  ats: ATSResult | null;
+}
+
+export default function CareerInsights({ ats }: Props) {
   return (
     <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-7 backdrop-blur-xl">
 
@@ -30,7 +36,7 @@ export default function CareerInsights() {
           </div>
 
           <span className="font-semibold text-white">
-            +8%
+            {ats ? `${ats.resumeQuality}%` : "N/A"}
           </span>
 
         </div>
@@ -51,7 +57,7 @@ export default function CareerInsights() {
           </div>
 
           <span className="font-semibold text-white">
-            78%
+            {ats ? `${ats.score}%` : "N/A"}
           </span>
 
         </div>
@@ -72,7 +78,7 @@ export default function CareerInsights() {
           </div>
 
           <span className="font-semibold text-white">
-            12
+            {ats ? "1" : "0"}
           </span>
 
         </div>

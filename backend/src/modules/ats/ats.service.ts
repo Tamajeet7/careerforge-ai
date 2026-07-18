@@ -75,19 +75,25 @@ export function calculateATS(
   const score =
     calculateScore(breakdown);
 
+  const metrics =
+    calculateMetrics(
+      breakdown
+    );
+
   return {
     score,
 
-    confidence:
+    resumeQuality:
+      metrics.resumeQuality,
+
+    skillsMatch:
+      metrics.skillsMatch,
+
+    aiConfidence:
       calculateConfidence(score),
 
-    readiness:
+    recruiterReadiness:
       calculateReadiness(score),
-
-    metrics:
-      calculateMetrics(
-        breakdown
-      ),
 
     breakdown,
 

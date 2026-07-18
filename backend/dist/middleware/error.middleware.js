@@ -1,15 +1,38 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.errorHandler = errorHandler;
-const ApiError_1 = require("../utils/ApiError");
-function errorHandler(err, req, res, next) {
-    if (err instanceof ApiError_1.ApiError) {
-        return res.status(err.statusCode).json({
+const zod_1 = require("zod");
+const ApiError_1 = require("../shared/errors/ApiError");
+function errorHandler(error, req, res, next) {
+    console.error(error);
+    /*
+    |--------------------------------------------------------------------------
+    | Custom API Errors
+    |--------------------------------------------------------------------------
+    */
+    if (error instanceof ApiError_1.ApiError) {
+        return res.status(error.statusCode).json({
             success: false,
-            message: err.message,
+            message: error.message,
         });
     }
-    console.error(err);
+    /*
+    |--------------------------------------------------------------------------
+    | Zod Validation
+    |--------------------------------------------------------------------------
+    */
+    if (error instanceof zod_1.ZodError) {
+        return res.status(400).json({
+            success: false,
+            message: "Validation failed",
+            errors: error.flatten(),
+        });
+    }
+    /*
+    |--------------------------------------------------------------------------
+    | Unknown Errors
+    |--------------------------------------------------------------------------
+    */
     return res.status(500).json({
         success: false,
         message: "Internal Server Error",

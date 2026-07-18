@@ -89,13 +89,13 @@ export async function uploadResume(
             atsScore: ats.score,
 
             resumeQuality:
-                ats.metrics.resumeQuality,
+                ats.resumeQuality,
 
             skillsMatch:
-                ats.metrics.skillsMatch,
+                ats.skillsMatch,
 
             aiConfidence:
-                ats.confidence,
+                ats.aiConfidence,
         }
     );
 
