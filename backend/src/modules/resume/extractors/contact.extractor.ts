@@ -18,7 +18,10 @@ export function extractContact(
     .map((line) => line.trim())
     .filter(Boolean);
 
-  const name = lines[0] ?? "";
+  let name = lines[0] ?? "";
+  
+  // Clean up if the parser squashed contact info onto the first line
+  name = name.split(/(Phone|Email|Mobile|Ph|Tel|[\+\d])/i)[0].trim();
 
   const email =
     header.match(EMAIL_REGEX)?.[0] ?? "";
