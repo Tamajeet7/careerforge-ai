@@ -1,0 +1,32 @@
+<svg width="1600" height="500" viewBox="0 0 1600 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Accent blue-indigo gradient -->
+    <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#6366F1"/>
+    </linearGradient>
+    <!-- Text gradient for "Forge" -->
+    <linearGradient id="text-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#6366F1"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Logo Icon Group -->
+  <g transform="translate(80, 85) scale(0.644)">
+    <!-- Outer C-Curve (Career) -->
+    <path d="M 360 196 A 120 120 0 1 0 360 316" fill="none" stroke="url(#logo-grad)" stroke-width="28" stroke-linecap="round"/>
+    
+    <!-- Verified Checkmark (Career Growth & Match) -->
+    <path d="M 340 185 L 244 281 L 194 231" fill="none" stroke="#FFFFFF" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Forge Spark / Success Node -->
+    <circle cx="340" cy="185" r="18" fill="url(#logo-grad)"/>
+    <circle cx="340" cy="185" r="9" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Typography -->
+  <text x="470" y="240" font-family="system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="105" font-weight="800" fill="#FFFFFF" letter-spacing="-1px">Career</text>
+  <text x="470" y="340" font-family="system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="105" font-weight="800" fill="url(#text-grad)" letter-spacing="-1px">Forge</text>
+  <text x="472" y="396" font-family="system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="30" font-weight="500" fill="#A8B3CF" letter-spacing="1px">AI-POWERED CAREER GROWTH PLATFORM</text>
+</svg>

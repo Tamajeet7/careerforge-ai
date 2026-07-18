@@ -1,0 +1,30 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#000A20"/>
+      <stop offset="100%" stop-color="#0B1736"/>
+    </linearGradient>
+    <!-- Accent blue-indigo gradient -->
+    <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#6366F1"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Container Box -->
+  <rect x="24" y="24" width="464" height="464" rx="108" fill="url(#bg-grad)" stroke="#233B72" stroke-width="8"/>
+
+  <!-- Icon Mark translated and scaled slightly to fit center -->
+  <g transform="translate(26, 26) scale(0.9)">
+    <!-- Outer C-Curve (Career) -->
+    <path d="M 360 196 A 120 120 0 1 0 360 316" fill="none" stroke="url(#logo-grad)" stroke-width="28" stroke-linecap="round"/>
+    
+    <!-- Verified Checkmark (Career Growth & Match) -->
+    <path d="M 340 185 L 244 281 L 194 231" fill="none" stroke="#FFFFFF" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Forge Spark / Success Node -->
+    <circle cx="340" cy="185" r="18" fill="url(#logo-grad)"/>
+    <circle cx="340" cy="185" r="9" fill="#FFFFFF"/>
+  </g>
+</svg>
