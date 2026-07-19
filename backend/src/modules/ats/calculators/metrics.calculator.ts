@@ -6,19 +6,21 @@ import type {
 export function calculateMetrics(
   breakdown: ATSBreakdown
 ): ATSMetrics {
-  return {
-    resumeQuality: Math.min(
-      100,
-      breakdown.projects +
-        breakdown.experience +
-        breakdown.education +
-        breakdown.formatting +
-        25
-    ),
+  const contentScore =
+    breakdown.projects +
+    breakdown.experience +
+    breakdown.education +
+    breakdown.formatting;
 
-    skillsMatch: Math.min(
-      100,
-      breakdown.skills * 4
-    ),
-  };
+  const resumeQuality = Math.min(
+    100,
+    Math.round((contentScore / 50) * 100)
+  );
+
+  const skillsMatch = Math.min(
+    100,
+    Math.round((breakdown.skills / 15) * 100)
+  );
+
+  return { resumeQuality, skillsMatch };
 }

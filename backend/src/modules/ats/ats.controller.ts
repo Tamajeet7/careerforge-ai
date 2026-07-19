@@ -47,7 +47,7 @@ export const getATS =
         parseResumeText(raw);
 
       const ats =
-        calculateATS(parsed);
+        await calculateATS(parsed);
 
       return ApiResponse.success(
         res,

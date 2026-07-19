@@ -34,18 +34,21 @@ export default function MetricCard({
       >
 
         <div
-          className={
+          className={`flex-1 min-w-0 ${
             align === "center"
               ? "w-full"
               : ""
-          }
+          }`}
         >
 
           <p className="text-sm text-slate-400">
             {title}
           </p>
 
-          <h3 className="mt-2 text-3xl font-bold text-white">
+          <h3 
+            className="mt-2 text-3xl font-bold text-white truncate"
+            title={typeof value === "string" ? value : undefined}
+          >
             {value}
           </h3>
 

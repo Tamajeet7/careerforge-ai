@@ -8,9 +8,11 @@ export default function ReplaceSection({
   onUploadSuccess,
 }: ReplaceSectionProps) {
   return (
-    <ResumeUploader
-      mode="replace"
-      onUploadSuccess={onUploadSuccess}
-    />
+    <div id="replace-section">
+      <ResumeUploader
+        mode="replace"
+        onUploadSuccess={onUploadSuccess}
+      />
+    </div>
   );
 }

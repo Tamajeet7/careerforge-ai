@@ -1,4 +1,5 @@
 import { Sparkles, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function AIOverview() {
   return (
@@ -33,7 +34,8 @@ export default function AIOverview() {
 
         </div>
 
-        <button
+        <Link
+          to="/ats-analyzer"
           className="
             flex
             items-center
@@ -52,7 +54,7 @@ export default function AIOverview() {
 
           <ArrowRight size={18} />
 
-        </button>
+        </Link>
 
       </div>
 

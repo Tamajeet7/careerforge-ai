@@ -3,6 +3,7 @@ import { Router } from "express";
 import {
   uploadResume,
   getMyResume,
+  handleGetParsedResume as getParsedResume,
   getATSScore,
 } from "./resume.controller";
 
@@ -22,6 +23,12 @@ router.get(
   "/me",
   authenticate,
   getMyResume
+);
+
+router.get(
+  "/parsed",
+  authenticate,
+  getParsedResume
 );
 
 router.get(

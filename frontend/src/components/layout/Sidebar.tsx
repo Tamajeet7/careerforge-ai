@@ -5,6 +5,7 @@ import {
   Bot,
   User,
   X,
+  Sparkles,
 } from "lucide-react";
 
 import {
@@ -28,6 +29,11 @@ const navItems = [
     name: "Resume",
     icon: FileText,
     path: "/resume",
+  },
+  {
+    name: "ATS Analyzer",
+    icon: Sparkles,
+    path: "/ats-analyzer",
   },
   {
     name: "Jobs",

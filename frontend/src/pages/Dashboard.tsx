@@ -115,7 +115,7 @@ export default function Dashboard() {
                   title="ATS Analyzer"
                   description="Check how ATS-friendly your resume is."
                   icon={<Sparkles />}
-                  to="/resume"
+                  to="/ats-analyzer"
                 />
 
                 <QuickActionCard

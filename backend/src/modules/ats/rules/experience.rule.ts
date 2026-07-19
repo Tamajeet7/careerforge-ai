@@ -11,17 +11,31 @@ export function evaluateExperience(
 
   const suggestions: string[] = [];
 
-  if (experiences >= 3)
-    score = 20;
+  if (experiences >= 4)
+    score = 18;
+  else if (experiences >= 3)
+    score = 14;
   else if (experiences >= 2)
-    score = 16;
+    score = 10;
   else if (experiences >= 1)
-    score = 12;
+    score = 6;
 
-  if (!experiences)
+  if (experiences < 2)
     suggestions.push(
-      "Add internship or work experience."
+      "Add more work or internship experience (aim for 2+ entries)."
     );
+  else if (experiences < 3)
+    suggestions.push(
+      "Consider adding a third experience entry for stronger impact."
+    );
+
+  const hasQuantifiableMetrics = /\d+/.test(resume.rawText);
+  if (!hasQuantifiableMetrics && experiences > 0) {
+    score = Math.max(0, score - 4);
+    suggestions.push(
+      "Add quantifiable metrics (numbers, percentages, $ amounts) to experience bullet points."
+    );
+  }
 
   return {
     score,

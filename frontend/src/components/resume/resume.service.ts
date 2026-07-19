@@ -42,3 +42,10 @@ export async function deleteResume() {
 
   return data;
 }
+
+export async function getParsedResume() {
+  const { data } =
+    await api.getParsedResume();
+
+  return data.data;
+}

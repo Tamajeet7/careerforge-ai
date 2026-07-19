@@ -9,7 +9,7 @@ if (!env.JWT_ACCESS_SECRET) {
 }
 
 const accessOptions: SignOptions = {
-  expiresIn: "15m",
+  expiresIn: "7d",
 };
 
 const refreshOptions: SignOptions = {
@@ -34,7 +34,7 @@ export function generateAccessToken(userId: string) {
   return jwt.sign(
     { userId },
     env.JWT_ACCESS_SECRET,
-    { expiresIn: "15m" }
+    accessOptions
   );
 }
 

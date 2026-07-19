@@ -90,6 +90,14 @@ export default function ResumePreview({
 
         <Button
           leftIcon={<Download size={18} />}
+          onClick={() => {
+            const a = document.createElement("a");
+            a.href = resume.fileUrl!;
+            a.download = resume.fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          }}
         >
           Download
         </Button>
@@ -97,6 +105,7 @@ export default function ResumePreview({
         <Button
           variant="secondary"
           leftIcon={<RefreshCw size={18} />}
+          onClick={() => document.getElementById("replace-section")?.scrollIntoView({ behavior: "smooth" })}
         >
           Reanalyze
         </Button>
@@ -104,6 +113,7 @@ export default function ResumePreview({
         <Button
           variant="secondary"
           leftIcon={<Upload size={18} />}
+          onClick={() => document.getElementById("replace-section")?.scrollIntoView({ behavior: "smooth" })}
         >
           Replace Resume
         </Button>

@@ -5,6 +5,7 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Dashboard from "../pages/Dashboard";
 import Resume from "../components/resume/ResumePage";
+import ATSAnalyzer from "../pages/ATSAnalyzer";
 import Jobs from "../pages/Jobs";
 import Interview from "../pages/Interview";
 import Profile from "../pages/Profile";
@@ -34,6 +35,15 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute>
               <Resume />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/ats-analyzer"
+          element={
+            <ProtectedRoute>
+              <ATSAnalyzer />
             </ProtectedRoute>
           }
         />

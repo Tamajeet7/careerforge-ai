@@ -8,7 +8,7 @@ export function evaluateEducation(
     resume.education.length;
 
   return {
-    score: education ? 12 : 0,
+    score: education ? 10 : 0,
 
     suggestions: education
       ? []

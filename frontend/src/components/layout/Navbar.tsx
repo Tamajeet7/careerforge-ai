@@ -14,7 +14,8 @@ export default function Navbar() {
 
   const titles: Record<string, string> = {
     "/dashboard": "Dashboard",
-    "/resume": "Resume Intelligence",
+    "/resume": "Resume",
+    "/ats-analyzer": "ATS Analyzer",
     "/jobs": "Jobs",
     "/interview": "AI Interview",
     "/profile": "My Profile",

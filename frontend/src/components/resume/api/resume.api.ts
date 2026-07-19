@@ -5,13 +5,7 @@ export const uploadResume = (
 ) =>
   api.post(
     "/resume/upload",
-    formData,
-    {
-      headers: {
-        "Content-Type":
-          "multipart/form-data",
-      },
-    }
+    formData
   );
 
 export const getResume = () =>
@@ -25,14 +19,11 @@ export const replaceResume = (
 ) =>
   api.post(
     "/resume/upload",
-    formData,
-    {
-      headers: {
-        "Content-Type":
-          "multipart/form-data",
-      },
-    }
+    formData
   );
 
 export const deleteResume = () =>
   api.delete("/resume");
+
+export const getParsedResume = () =>
+  api.get("/resume/parsed");

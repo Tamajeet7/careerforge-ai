@@ -9,6 +9,7 @@ import {
   saveResume,
   getResume,
   updateResumeAnalytics,
+  getParsedResume as getParsedResumeService,
 } from "./resume.service";
 
 import { calculateATS } from "../ats";
@@ -81,7 +82,7 @@ export async function uploadResume(
     */
 
     const ats =
-    calculateATS(parsed);
+    await calculateATS(parsed);
 
     await updateResumeAnalytics(
         req.user!.userId,
@@ -153,6 +154,38 @@ export async function getMyResume(
       success: false,
       message:
         "Failed to fetch resume",
+    });
+  }
+}
+
+export async function handleGetParsedResume(
+  req: Request,
+  res: Response
+) {
+  try {
+    const parsed =
+      await getParsedResumeService(
+        req.user!.userId
+      );
+
+    if (!parsed) {
+      return res.status(404).json({
+        success: false,
+        message: "Resume not found",
+      });
+    }
+
+    return res.json({
+      success: true,
+      data: parsed,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message:
+        "Failed to parse resume",
     });
   }
 }

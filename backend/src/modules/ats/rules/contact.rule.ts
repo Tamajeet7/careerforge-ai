@@ -11,27 +11,27 @@ export function evaluateContact(
   const { contact, links } = resume;
 
   if (contact.name)
-    score += 8;
+    score += 3;
   else
     suggestions.push("Add your full name.");
 
   if (contact.email)
-    score += 6;
+    score += 2;
   else
     suggestions.push("Include a professional email address.");
 
   if (contact.phone)
-    score += 6;
+    score += 2;
   else
     suggestions.push("Add your phone number.");
 
   if (links.linkedin)
-    score += 3;
+    score += 2;
   else
     suggestions.push("Include your LinkedIn profile.");
 
   if (links.github || links.portfolio)
-    score += 2;
+    score += 1;
 
   return {
     score,

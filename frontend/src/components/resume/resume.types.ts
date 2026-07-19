@@ -91,3 +91,33 @@ export type RecruiterReadiness =
   | "Average"
   | "Good"
   | "Excellent";
+
+/*
+|--------------------------------------------------------------------------
+| Parsed Resume
+|--------------------------------------------------------------------------
+*/
+
+export interface ParsedResume {
+  contact: {
+    name: string;
+    email: string;
+    phone: string;
+    location?: string;
+  };
+  links: {
+    github?: string;
+    linkedin?: string;
+    portfolio?: string;
+    website?: string;
+  };
+  summary?: string;
+  skills: string[];
+  education: string[];
+  experience: string[];
+  projects: string[];
+  certifications: string[];
+  achievements: string[];
+  languages: string[];
+  rawText: string;
+}

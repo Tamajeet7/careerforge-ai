@@ -11,18 +11,18 @@ export function evaluateProjects(
 
   const suggestions: string[] = [];
 
-  if (projects >= 4)
-    score = 20;
+  if (projects >= 5)
+    score = 12;
   else if (projects >= 3)
-    score = 18;
+    score = 9;
   else if (projects >= 2)
-    score = 14;
+    score = 6;
   else if (projects >= 1)
-    score = 10;
+    score = 3;
 
-  if (projects < 2)
+  if (projects < 3)
     suggestions.push(
-      "Include more impactful projects."
+      "Include more impactful projects (aim for 3+)."
     );
 
   return {
