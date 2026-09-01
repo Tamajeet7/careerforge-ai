@@ -28,4 +28,6 @@ export interface ATSResult {
   breakdown: ATSBreakdown;
 
   suggestions: string[];
+  strengths?: string[];
+  weaknesses?: string[];
 }

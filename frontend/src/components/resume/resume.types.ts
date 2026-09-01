@@ -52,8 +52,8 @@ export interface ATSResult {
   breakdown: ATSBreakdown;
 
   suggestions: string[];
-  strengths: string[];
-  weaknesses: string[];
+  strengths?: string[];
+  weaknesses?: string[];
 }
 
 export interface ATSBreakdown {

@@ -146,14 +146,14 @@ export default function ATSAnalyzer() {
               </section>
             )}
 
-            {ats && ats.strengths?.length > 0 && ats.weaknesses?.length > 0 && (
+            {ats && (ats.strengths?.length ?? 0) > 0 && (ats.weaknesses?.length ?? 0) > 0 && (
               <section className="grid gap-6 sm:grid-cols-2">
                 <div className="rounded-3xl border border-emerald-500/20 bg-emerald-500/5 p-6">
                   <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-emerald-400">
                     <span>✓</span> Strengths
                   </h2>
                   <ul className="space-y-2">
-                    {ats.strengths.map((s, i) => (
+                    {ats.strengths?.map((s, i) => (
                       <li key={i} className="flex gap-2 text-sm text-slate-300">
                         <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400" />
                         {s}
@@ -166,7 +166,7 @@ export default function ATSAnalyzer() {
                     <span>✗</span> Weaknesses
                   </h2>
                   <ul className="space-y-2">
-                    {ats.weaknesses.map((w, i) => (
+                    {ats.weaknesses?.map((w, i) => (
                       <li key={i} className="flex gap-2 text-sm text-slate-300">
                         <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-red-400" />
                         {w}
@@ -177,8 +177,8 @@ export default function ATSAnalyzer() {
               </section>
             )}
 
-            {ats && ats.suggestions?.length > 0 && (
-              <SuggestionsPanel suggestions={ats.suggestions} />
+            {ats && (ats.suggestions?.length ?? 0) > 0 && (
+              <SuggestionsPanel suggestions={ats.suggestions || []} />
             )}
 
             {parsed && (

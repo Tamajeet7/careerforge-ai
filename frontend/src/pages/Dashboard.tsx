@@ -1,7 +1,4 @@
-import {
-  useEffect,
-  useState,
-} from "react";
+import { useEffect } from "react";
 
 import DashboardLayout from "../components/layout/DashboardLayout";
 
@@ -24,7 +21,6 @@ import {
   Sparkles,
   FileText,
   Target,
-  Briefcase,
 } from "lucide-react";
 
 import { useResumeContext } from "../context/ResumeContext";
