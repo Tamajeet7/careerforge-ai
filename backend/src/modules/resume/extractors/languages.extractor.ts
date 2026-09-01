@@ -1,8 +1,6 @@
-export function extractLanguages(
-  section: string
-): string[] {
-  return section
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean);
+import type { SectionItem } from '../parser/parser.types';
+import { extractListItems } from './list.extractor';
+
+export function extractLanguages(section: string): SectionItem[] {
+  return extractListItems(section);
 }

@@ -1,6 +1,5 @@
 import {
   useEffect,
-  useState,
 } from "react";
 
 import DashboardLayout from "../components/layout/DashboardLayout";
@@ -24,61 +23,29 @@ import {
   FileText,
 } from "lucide-react";
 
-import {
-  getResume,
-  getParsedResume,
-} from "../components/resume/resume.service";
-
-import {
-  getATS,
-} from "../services/ats.service";
-
-import type {
-  Resume,
-  ATSResult,
-  ParsedResume,
-} from "../components/resume/resume.types";
+import { useResumeContext } from "../context/ResumeContext";
 
 export default function ATSAnalyzer() {
-  const [resume, setResume] =
-    useState<Resume | null>(null);
-
-  const [parsed, setParsed] =
-    useState<ParsedResume | null>(null);
-
-  const [ats, setATS] =
-    useState<ATSResult | null>(null);
-
-  const [loading, setLoading] =
-    useState(true);
-
-  async function loadData() {
-    setLoading(true);
-
-    try {
-      const [
-        resumeData,
-        atsData,
-        parsedData,
-      ] = await Promise.all([
-        getResume(),
-        getATS(),
-        getParsedResume().catch(() => null),
-      ]);
-
-      setResume(resumeData);
-      setATS(atsData);
-      setParsed(parsedData);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  }
+  const {
+    resume,
+    parsed,
+    ats,
+    loadingATS,
+    loadingResume,
+    fetchResume,
+    fetchATS,
+  } = useResumeContext();
 
   useEffect(() => {
-    loadData();
-  }, []);
+    fetchResume(false);
+    fetchATS(false);
+  }, [fetchResume, fetchATS]);
+
+  const handleReanalyze = () => {
+    fetchATS(true);
+  };
+
+  const isLoading = (loadingResume && !resume) || (loadingATS && !ats);
 
   return (
     <DashboardLayout>
@@ -88,7 +55,7 @@ export default function ATSAnalyzer() {
           subtitle="AI-powered analysis of your resume's ATS compatibility and optimization suggestions."
         />
 
-        {loading ? (
+        {isLoading ? (
           <div className="flex h-[60vh] items-center justify-center">
             <Spinner />
           </div>
@@ -113,10 +80,11 @@ export default function ATSAnalyzer() {
               </p>
               <Button
                 variant="secondary"
+                loading={loadingATS}
                 leftIcon={<RefreshCw size={16} />}
-                onClick={loadData}
+                onClick={handleReanalyze}
               >
-                Reanalyze
+                {loadingATS ? "Analyzing..." : "Reanalyze"}
               </Button>
             </div>
 
@@ -152,28 +120,65 @@ export default function ATSAnalyzer() {
                 <h2 className="mb-6 text-2xl font-semibold text-white">
                   Score Breakdown
                 </h2>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {Object.entries(ats.breakdown).map(([key, value]) => (
-                    <div
-                      key={key}
-                      className="flex items-center justify-between rounded-2xl border border-slate-800 bg-slate-950/60 px-5 py-4"
-                    >
-                      <span className="text-sm font-medium text-slate-300 capitalize">
-                        {key}
-                      </span>
-                      <span className="text-lg font-bold text-white">
-                        {value}/{key === "contact" ? 10 : key === "skills" ? 15 : key === "projects" ? 12 : key === "experience" ? 18 : key === "education" ? 10 : 10}
-                      </span>
-                    </div>
-                  ))}
+                <div className="space-y-4">
+                  {Object.entries(ats.breakdown).map(([key, value]) => {
+                    const score = Math.round(value as number);
+                    const color =
+                      score >= 80 ? "bg-emerald-500" :
+                      score >= 60 ? "bg-blue-500" :
+                      score >= 40 ? "bg-amber-500" : "bg-red-500";
+                    return (
+                      <div key={key}>
+                        <div className="mb-1 flex items-center justify-between">
+                          <span className="text-sm font-medium capitalize text-slate-300">{key}</span>
+                          <span className="text-sm font-bold text-white">{score}%</span>
+                        </div>
+                        <div className="h-2 w-full rounded-full bg-slate-800">
+                          <div
+                            className={`h-2 rounded-full transition-all duration-700 ${color}`}
+                            style={{ width: `${score}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </section>
             )}
 
-            {ats && ats.suggestions.length > 0 && (
-              <SuggestionsPanel
-                suggestions={ats.suggestions}
-              />
+            {ats && ats.strengths?.length > 0 && ats.weaknesses?.length > 0 && (
+              <section className="grid gap-6 sm:grid-cols-2">
+                <div className="rounded-3xl border border-emerald-500/20 bg-emerald-500/5 p-6">
+                  <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-emerald-400">
+                    <span>✓</span> Strengths
+                  </h2>
+                  <ul className="space-y-2">
+                    {ats.strengths.map((s, i) => (
+                      <li key={i} className="flex gap-2 text-sm text-slate-300">
+                        <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400" />
+                        {s}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="rounded-3xl border border-red-500/20 bg-red-500/5 p-6">
+                  <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-red-400">
+                    <span>✗</span> Weaknesses
+                  </h2>
+                  <ul className="space-y-2">
+                    {ats.weaknesses.map((w, i) => (
+                      <li key={i} className="flex gap-2 text-sm text-slate-300">
+                        <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-red-400" />
+                        {w}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </section>
+            )}
+
+            {ats && ats.suggestions?.length > 0 && (
+              <SuggestionsPanel suggestions={ats.suggestions} />
             )}
 
             {parsed && (

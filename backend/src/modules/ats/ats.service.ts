@@ -18,71 +18,115 @@ import {
   mergeSuggestions,
 } from "./calculators";
 
+/**
+ * Analyzes a parsed resume and returns a comprehensive ATS score result.
+ * Uses Gemini AI for intelligent, context-aware analysis when available,
+ * with a rule-based fallback for when the API key is not configured.
+ */
 export async function calculateATS(
   resume: ParsedResume
 ): Promise<ATSResult> {
   const apiKey = process.env.GEMINI_API_KEY;
+  const isValidKey = apiKey && apiKey !== "your_gemini_api_key_here" && apiKey.trim().length > 10;
 
-  if (apiKey) {
+  if (isValidKey) {
     try {
       const { GoogleGenAI } = await import("@google/genai");
-      const ai = new GoogleGenAI({ apiKey });
+      const ai = new GoogleGenAI({ apiKey: apiKey! });
+
+      // Build a human-readable summary of the resume for a better prompt
+      const resumeSummary = buildResumeSummary(resume);
+
       const prompt = `
-You are an extremely strict, critical, and realistic ATS (Applicant Tracking System) software used by Fortune 500 companies. 
-Your task is to analyze the following parsed resume data and evaluate it strictly against standard ATS criteria. 
+You are a world-class ATS (Applicant Tracking System) and career coach. Analyze the following resume and provide a thorough, honest evaluation.
 
-CRITICAL INSTRUCTIONS for scoring:
-- Be EXTREMELY HARSH and REALISTIC. A typical resume scores between 40-65. Only the absolute top 1% of perfect resumes should score above 85.
-- The average resume across all industries scores around 50-55. Do NOT inflate scores.
-- Penalize heavily for missing quantifiable impact metrics (numbers, percentages, $ amounts) in experience bullets.
-- Penalize heavily for generic, uninspiring bullet points that lack action verbs.
-- Penalize for missing contact info (e.g. LinkedIn, GitHub, missing phone number).
-- Penalize for short, vague project descriptions.
-- A score of 70+ should be genuinely impressive. A score of 80+ should be exceptional.
-- Calculate scores (0-100) for different sections based on these harsh criteria.
-- Provide actionable, blunt, and highly specific suggestions for improvement. Do not sugarcoat the feedback.
+RESUME CONTENT:
+${resumeSummary}
 
-Resume JSON:
-${JSON.stringify(resume, null, 2)}
+SCORING PHILOSOPHY:
+- Be realistic and honest. Most entry-level/junior resumes score 45-65. Mid-level: 60-75. Senior/excellent: 75-90. Perfect is nearly impossible.
+- Each breakdown category is scored 0-100 independently.
+- Penalize hard for: missing quantifiable metrics (numbers, %, $), weak action verbs, vague descriptions, missing GitHub/LinkedIn.
+- Reward: strong action verbs (Architected, Engineered, Developed), quantified impact, clean structure, relevant tech stack.
 
-You must return ONLY a JSON object that strictly conforms to the following TypeScript interface:
+SCORING CRITERIA:
+- contact (0-100): completeness of name, email, phone, location, LinkedIn, GitHub
+- skills (0-100): breadth, relevance, organization of technical skills for a software engineering role
+- projects (0-100): number of projects, quality of descriptions, tech stack diversity, presence of impact/outcomes, links
+- experience (0-100): quality of bullet points, action verbs, quantifiable metrics, relevance
+- education (0-100): institution prestige, GPA/percentage, degree relevance
+- formatting (0-100): inferred from structure — clear sections, consistent style, good use of bullet points, length
+
+Return ONLY this exact JSON structure with no markdown, no explanation:
 {
-  "score": number, // Overall ATS score (0-100)
-  "resumeQuality": number, // Overall quality score (0-100)
-  "skillsMatch": number, // General skill relevancy score (0-100)
-  "aiConfidence": "High" | "Medium" | "Low", // Confidence in your parsing/evaluation
-  "recruiterReadiness": "Poor" | "Average" | "Good" | "Excellent", // Readiness level
+  "score": <number 0-100, weighted overall ATS score>,
+  "resumeQuality": <number 0-100, overall resume quality as a human recruiter would judge it>,
+  "skillsMatch": <number 0-100, how well the skills match a typical software engineering role>,
+  "aiConfidence": <"High" | "Medium" | "Low", your confidence in this assessment>,
+  "recruiterReadiness": <"Poor" | "Average" | "Good" | "Excellent">,
   "breakdown": {
-    "contact": number, // Score (0-100) for contact info completeness
-    "skills": number, // Score (0-100) for skills presentation
-    "projects": number, // Score (0-100) for projects quality
-    "experience": number, // Score (0-100) for experience descriptions
-    "education": number, // Score (0-100) for education section
-    "formatting": number // Score (0-100) for estimated formatting/structure
+    "contact": <0-100>,
+    "skills": <0-100>,
+    "projects": <0-100>,
+    "experience": <0-100>,
+    "education": <0-100>,
+    "formatting": <0-100>
   },
-  "suggestions": string[] // Array of actionable, specific suggestions to improve the resume
+  "strengths": [<3-5 specific things this resume does WELL>],
+  "weaknesses": [<3-5 specific things that need IMPROVEMENT>],
+  "suggestions": [<5-8 concrete, actionable suggestions to improve the resume — be specific, reference actual content>]
 }
 `;
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-        config: {
-            responseMimeType: "application/json"
+      const CANDIDATE_MODELS = [
+        "gemini-3.5-flash",
+        "gemini-3.5-flash-lite",
+        "gemini-3.7-flash",
+        "gemini-3.1-flash-lite",
+        "gemini-3-flash-preview",
+        "gemini-3.6-flash",
+        "gemini-flash-latest",
+        "gemini-pro-latest",
+      ];
+
+      for (const model of CANDIDATE_MODELS) {
+        try {
+          const response = await ai.models.generateContent({
+            model,
+            contents: prompt,
+            config: {
+              responseMimeType: "application/json",
+            },
+          });
+
+          const text = response.text || "{}";
+          const result = JSON.parse(text) as ATSResult;
+
+          if (
+            result &&
+            typeof result.score === "number" &&
+            result.breakdown &&
+            Array.isArray(result.suggestions)
+          ) {
+            result.strengths = result.strengths ?? [];
+            result.weaknesses = result.weaknesses ?? [];
+            console.log(`[ATS AI] Model ${model} succeeded! Score: ${result.score}, Confidence: ${result.aiConfidence}`);
+            return result;
+          }
+        } catch (error: any) {
+          console.warn(`[ATS AI] Model ${model} failed (${error?.message?.substring(0, 100) || error}), trying fallback...`);
         }
-      });
-      
-      const text = response.text || "{}";
-      const result = JSON.parse(text) as ATSResult;
-      
-      if (result && typeof result.score === 'number' && result.breakdown) {
-          return result;
       }
+
+      console.warn("[ATS AI] All Gemini candidate models failed, falling back to rule-based analysis.");
     } catch (error) {
-      console.error("AI ATS Calculation failed, falling back to static rules:", error);
+      console.error("[ATS AI] Gemini client failed, using rule-based fallback:", error);
     }
+  } else {
+    console.log("[ATS AI] No valid API key — using rule-based fallback.");
   }
 
+  // ── Fallback: rule-based scoring ──────────────────────────────────────
   const contact = evaluateContact(resume);
   const skills = evaluateSkills(resume);
   const projects = evaluateProjects(resume);
@@ -90,25 +134,42 @@ You must return ONLY a JSON object that strictly conforms to the following TypeS
   const education = evaluateEducation(resume);
   const formatting = evaluateFormatting(resume);
 
+  // Convert raw rule scores to 0-100 scale for consistency with AI output
   const breakdown = {
+    contact: Math.round((contact.score / 10) * 100),
+    skills: Math.round((skills.score / 15) * 100),
+    projects: Math.round((projects.score / 12) * 100),
+    experience: Math.round((experience.score / 18) * 100),
+    education: Math.round((education.score / 10) * 100),
+    formatting: Math.round((formatting.score / 10) * 100),
+  };
+
+  const rawScore = calculateScore({
     contact: contact.score,
     skills: skills.score,
     projects: projects.score,
     experience: experience.score,
     education: education.score,
     formatting: formatting.score,
-  };
-
-  const score = calculateScore(breakdown);
-  const metrics = calculateMetrics(breakdown);
+  });
+  const metrics = calculateMetrics({
+    contact: contact.score,
+    skills: skills.score,
+    projects: projects.score,
+    experience: experience.score,
+    education: education.score,
+    formatting: formatting.score,
+  });
 
   return {
-    score,
+    score: rawScore,
     resumeQuality: metrics.resumeQuality,
     skillsMatch: metrics.skillsMatch,
-    aiConfidence: calculateConfidence(score),
-    recruiterReadiness: calculateReadiness(score),
+    aiConfidence: calculateConfidence(rawScore),
+    recruiterReadiness: calculateReadiness(rawScore),
     breakdown,
+    strengths: [],
+    weaknesses: [],
     suggestions: mergeSuggestions(
       contact.suggestions,
       skills.suggestions,
@@ -118,4 +179,58 @@ You must return ONLY a JSON object that strictly conforms to the following TypeS
       formatting.suggestions
     ),
   };
+}
+
+/**
+ * Builds a readable plain-text summary of the parsed resume for the AI prompt.
+ * This is more readable than raw JSON and produces better AI output.
+ */
+function buildResumeSummary(resume: ParsedResume): string {
+  const lines: string[] = [];
+
+  // Contact
+  lines.push(`== CONTACT ==`);
+  lines.push(`Name: ${resume.contact.name}`);
+  lines.push(`Email: ${resume.contact.email}`);
+  lines.push(`Phone: ${resume.contact.phone}`);
+  if (resume.contact.location) lines.push(`Location: ${resume.contact.location}`);
+  if (resume.links.github) lines.push(`GitHub: ${resume.links.github}`);
+  if (resume.links.linkedin) lines.push(`LinkedIn: ${resume.links.linkedin}`);
+  if (resume.links.portfolio) lines.push(`Portfolio: ${resume.links.portfolio}`);
+
+  // Skills
+  lines.push(`\n== SKILLS ==`);
+  lines.push(resume.skills.join(", ") || "None");
+
+  // Education
+  lines.push(`\n== EDUCATION (${resume.education.length} entries) ==`);
+  for (const edu of resume.education) {
+    lines.push(`• ${edu.title}${edu.subtitle ? ` — ${edu.subtitle}` : ""}`);
+  }
+
+  // Experience
+  lines.push(`\n== EXPERIENCE (${resume.experience.length} entries) ==`);
+  for (const exp of resume.experience) {
+    lines.push(`\n${exp.title}${exp.subtitle ? `\n  ${exp.subtitle}` : ""}`);
+    for (const bullet of exp.bullets) lines.push(`  - ${bullet}`);
+  }
+
+  // Projects
+  lines.push(`\n== PROJECTS (${resume.projects.length} entries) ==`);
+  for (const proj of resume.projects) {
+    lines.push(`\n${proj.title}${proj.subtitle ? `\n  ${proj.subtitle}` : ""}`);
+    for (const bullet of proj.bullets) lines.push(`  - ${bullet}`);
+  }
+
+  // Certifications & Achievements
+  if (resume.certifications.length > 0) {
+    lines.push(`\n== CERTIFICATIONS ==`);
+    for (const c of resume.certifications) lines.push(`• ${c.title}`);
+  }
+  if (resume.achievements.length > 0) {
+    lines.push(`\n== ACHIEVEMENTS ==`);
+    for (const a of resume.achievements) lines.push(`• ${a.title}`);
+  }
+
+  return lines.join("\n");
 }

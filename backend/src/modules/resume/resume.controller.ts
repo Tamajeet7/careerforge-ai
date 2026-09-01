@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 
 import {
   readResume,
-  parseResumeText,
+  parseResumeWithAI,
 } from "./parser";
 
 import {
@@ -11,6 +11,8 @@ import {
   updateResumeAnalytics,
   getParsedResume as getParsedResumeService,
 } from "./resume.service";
+
+import { ResumeCache } from "./resume.cache";
 
 import { calculateATS } from "../ats";
 
@@ -42,7 +44,7 @@ export async function uploadResume(
     */
 
     const parsed =
-      parseResumeText(rawText);
+      await parseResumeWithAI(rawText);
 
     /*
     |--------------------------------------------------------------------------
@@ -81,8 +83,10 @@ export async function uploadResume(
     |--------------------------------------------------------------------------
     */
 
-    const ats =
-    await calculateATS(parsed);
+    const ats = await calculateATS(parsed);
+
+    ResumeCache.setParsed(req.user!.userId, resume.filePath, parsed);
+    ResumeCache.setATS(req.user!.userId, resume.filePath, ats);
 
     await updateResumeAnalytics(
         req.user!.userId,

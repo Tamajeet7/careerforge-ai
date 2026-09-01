@@ -52,6 +52,8 @@ export interface ATSResult {
   breakdown: ATSBreakdown;
 
   suggestions: string[];
+  strengths: string[];
+  weaknesses: string[];
 }
 
 export interface ATSBreakdown {
@@ -98,6 +100,12 @@ export type RecruiterReadiness =
 |--------------------------------------------------------------------------
 */
 
+export interface SectionItem {
+  title: string;
+  subtitle?: string;
+  bullets: string[];
+}
+
 export interface ParsedResume {
   contact: {
     name: string;
@@ -113,11 +121,11 @@ export interface ParsedResume {
   };
   summary?: string;
   skills: string[];
-  education: string[];
-  experience: string[];
-  projects: string[];
-  certifications: string[];
-  achievements: string[];
-  languages: string[];
+  education: SectionItem[];
+  experience: SectionItem[];
+  projects: SectionItem[];
+  certifications: SectionItem[];
+  achievements: SectionItem[];
+  languages: SectionItem[];
   rawText: string;
 }

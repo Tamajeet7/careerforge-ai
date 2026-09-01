@@ -18,12 +18,12 @@ export interface RuleResult {
 */
 
 export interface ATSBreakdown {
-  contact: number;
-  skills: number;
-  projects: number;
-  experience: number;
-  education: number;
-  formatting: number;
+  contact: number;     // 0-100
+  skills: number;      // 0-100
+  projects: number;    // 0-100
+  experience: number;  // 0-100
+  education: number;   // 0-100
+  formatting: number;  // 0-100
 }
 
 /*
@@ -69,4 +69,8 @@ export interface ATSResult {
   breakdown: ATSBreakdown;
 
   suggestions: string[];
+
+  strengths: string[];
+
+  weaknesses: string[];
 }

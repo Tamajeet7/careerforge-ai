@@ -27,35 +27,18 @@ import {
   Briefcase,
 } from "lucide-react";
 
-import { getResume } from "../components/resume/resume.service";
-import { getATS } from "../services/ats.service";
-
-import type { Resume } from "../components/resume/resume.types";
-import type { ATSResult } from "../types/ats.types";
+import { useResumeContext } from "../context/ResumeContext";
 
 export default function Dashboard() {
-  const [resume, setResume] = useState<Resume | null>(null);
-  const [ats, setATS] = useState<ATSResult | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { resume, ats, loadingResume, loadingATS, fetchResume, fetchATS } =
+    useResumeContext();
 
   useEffect(() => {
-    async function load() {
-      try {
-        const [resumeData, atsData] = await Promise.all([
-          getResume(),
-          getATS().catch(() => null),
-        ]);
-        setResume(resumeData);
-        setATS(atsData);
-      } catch {
-        setResume(null);
-        setATS(null);
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
-  }, []);
+    fetchResume(false);
+    fetchATS(false);
+  }, [fetchResume, fetchATS]);
+
+  const loading = (loadingResume && !resume) || (loadingATS && !ats);
 
   return (
     <DashboardLayout>
@@ -89,9 +72,9 @@ export default function Dashboard() {
               />
 
               <StatsCard
-                title="Applications"
-                value={resume ? "1" : "0"}
-                icon={<Briefcase />}
+                title="Skills Found"
+                value={resume?.skills ? resume.skills.length.toString() : "0"}
+                icon={<Sparkles />}
               />
 
             </section>

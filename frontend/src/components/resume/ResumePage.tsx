@@ -1,7 +1,4 @@
-import {
-  useEffect,
-  useState,
-} from "react";
+import { useEffect } from "react";
 
 import DashboardLayout from "../layout/DashboardLayout";
 
@@ -16,51 +13,24 @@ import ResumeUploader from "./upload/ResumeUploader";
 import ReplaceSection from "./upload/ReplaceSection";
 import ResumeParserDisplay from "./ResumeParserDisplay";
 
-import {
-  getResume,
-  getParsedResume,
-} from "./resume.service";
-
-import type {
-  Resume,
-  ParsedResume,
-} from "./resume.types";
+import { useResumeContext } from "../../context/ResumeContext";
 
 export default function Resume() {
-  const [resume, setResume] =
-    useState<Resume | null>(null);
-
-  const [parsed, setParsed] =
-    useState<ParsedResume | null>(null);
-
-  const [loading, setLoading] =
-    useState(true);
-
-  async function loadResume() {
-    try {
-      const resumeData =
-        await getResume();
-
-      setResume(resumeData);
-
-      const parsedData =
-        await getParsedResume().catch(
-          () => null
-        );
-
-      setParsed(parsedData);
-    } catch (error) {
-      console.error(error);
-      setResume(null);
-      setParsed(null);
-    } finally {
-      setLoading(false);
-    }
-  }
+  const {
+    resume,
+    parsed,
+    loadingResume,
+    loadAll,
+    fetchResume,
+  } = useResumeContext();
 
   useEffect(() => {
-    loadResume();
-  }, []);
+    fetchResume(false);
+  }, [fetchResume]);
+
+  const handleUploadSuccess = () => {
+    loadAll(true);
+  };
 
   return (
     <DashboardLayout>
@@ -74,13 +44,13 @@ export default function Resume() {
           }
         />
 
-        {loading ? (
+        {loadingResume && !resume ? (
           <div className="flex h-[60vh] items-center justify-center">
             <Spinner />
           </div>
         ) : !resume ? (
           <ResumeUploader
-            onUploadSuccess={loadResume}
+            onUploadSuccess={handleUploadSuccess}
           />
         ) : (
           <div className="space-y-8">
@@ -102,7 +72,7 @@ export default function Resume() {
             )}
 
             <ReplaceSection
-              onUploadSuccess={loadResume}
+              onUploadSuccess={handleUploadSuccess}
             />
           </div>
         )}

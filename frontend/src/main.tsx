@@ -7,11 +7,13 @@ import "./index.css";
 
 import { AuthProvider } from "./context/AuthContext";
 import { SidebarProvider } from "./context/SidebarContext";
+import { ResumeProvider } from "./context/ResumeContext";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <AuthProvider>
       <SidebarProvider>
+        <ResumeProvider>
         <Toaster
           position="top-right"
           toastOptions={{
@@ -37,6 +39,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         />
 
         <App />
+        </ResumeProvider>
       </SidebarProvider>
     </AuthProvider>
   </React.StrictMode>

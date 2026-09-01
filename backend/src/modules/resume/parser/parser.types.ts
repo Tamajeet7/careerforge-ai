@@ -24,6 +24,12 @@ export interface ResumeLinks {
   website?: string;
 }
 
+export interface SectionItem {
+  title: string;
+  subtitle?: string;
+  bullets: string[];
+}
+
 /*
 |--------------------------------------------------------------------------
 | Resume Sections
@@ -65,17 +71,17 @@ export interface ParsedResume {
 
   skills: string[];
 
-  education: string[];
+  education: SectionItem[];
 
-  experience: string[];
+  experience: SectionItem[];
 
-  projects: string[];
+  projects: SectionItem[];
 
-  certifications: string[];
+  certifications: SectionItem[];
 
-  achievements: string[];
+  achievements: SectionItem[];
 
-  languages: string[];
+  languages: SectionItem[];
 
   rawText: string;
 }

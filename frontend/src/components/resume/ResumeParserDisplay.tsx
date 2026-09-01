@@ -1,4 +1,4 @@
-import type { ParsedResume } from "./resume.types";
+import type { ParsedResume, SectionItem } from "./resume.types";
 
 import {
   User,
@@ -40,17 +40,29 @@ function SectionCard({
   );
 }
 
-function ListItems({ items }: { items: string[] }) {
+function ListItems({ items }: { items: SectionItem[] }) {
   if (items.length === 0) {
     return <p className="text-sm text-slate-500">None detected</p>;
   }
 
   return (
-    <ul className="space-y-1">
+    <ul className="space-y-4">
       {items.map((item, i) => (
-        <li key={i} className="flex gap-2 text-sm text-slate-300">
-          <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-400/60" />
-          <span>{item}</span>
+        <li key={i} className="space-y-1">
+          <div className="font-medium text-slate-200">{item.title}</div>
+          {item.subtitle && (
+            <div className="text-sm italic text-slate-400">{item.subtitle}</div>
+          )}
+          {item.bullets.length > 0 && (
+            <ul className="space-y-1 pt-1 pl-4">
+              {item.bullets.map((bullet, j) => (
+                <li key={j} className="flex gap-2 text-sm text-slate-300">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-400/40" />
+                  <span>{bullet}</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </li>
       ))}
     </ul>
