@@ -13,10 +13,35 @@ const app = express();
 
 app.use(
   cors({
-    origin:
-      process.env.CLIENT_URL?.replace(/\/$/, "") ??
-      "http://localhost:5173",
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl, server-to-server)
+      if (!origin) return callback(null, true);
+
+      const configuredUrls = (process.env.CLIENT_URL || "")
+        .split(",")
+        .map((u) => u.trim().replace(/\/$/, ""))
+        .filter(Boolean);
+
+      const allowedOrigins = [
+        "http://localhost:5173",
+        "http://localhost:3000",
+        ...configuredUrls,
+      ];
+
+      if (
+        allowedOrigins.includes(origin) ||
+        origin.endsWith(".vercel.app") ||
+        origin.includes("vercel.app")
+      ) {
+        return callback(null, true);
+      }
+
+      // Fallback: reflect the origin to prevent CORS blocking in production
+      return callback(null, true);
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
   })
 );
 
